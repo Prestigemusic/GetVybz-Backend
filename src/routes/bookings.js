@@ -1,1 +1,19 @@
-import {Router} from 'express'; const r=Router(); r.post('/', (req,res)=>res.json({id:'bk_demo', checkoutUrl:'https://example.com/checkout?success=true'})); export default r;
+import express from "express";
+
+const router = express.Router();
+
+// Example route: GET all bookings
+router.get("/", (req, res) => {
+  res.json({ message: "All bookings" });
+});
+
+// Example route: Create a booking
+router.post("/", (req, res) => {
+  const { customerName, service } = req.body;
+  res.json({
+    message: "Booking created successfully",
+    booking: { customerName, service },
+  });
+});
+
+export default router;

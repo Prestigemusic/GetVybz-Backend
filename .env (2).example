@@ -1,0 +1,5 @@
+PORT=5000
+DATABASE_URL=postgresql://user:pass@localhost:5432/getvybz
+PAYSTACK_KEY=your_paystack_key
+FLUTTERWAVE_KEY=your_flutterwave_key
+VERIFYME_KEY=your_verifyme_key
