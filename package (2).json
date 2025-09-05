@@ -1,17 +1,25 @@
 {
-  "name": "getvybz",
+  "name": "getvybz-backend",
   "version": "1.0.0",
-  "private": true,
+  "description": "",
+  "main": "index.js",
+  "type": "module",
   "scripts": {
-    "dev": "concurrently \"npm run start:mobile\" \"npm run start:backend\"",
-    "start:mobile": "cd mobile && expo start --clear",
-    "start:backend": "cd backend && npm run dev",
-    "install:all": "npm install && cd mobile && npm install && cd ../backend && npm install && cd ../admin-dashboard && npm install",
-    "migrate": "cd backend && npx sequelize-cli db:migrate"
+    "start:server": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.18.0"
   },
   "devDependencies": {
-    "concurrently": "^8.2.0",
-    "typescript": "~5.8.3",
-    "@types/react": "~19.0.10"
+    "nodemon": "^3.1.10"
   }
 }

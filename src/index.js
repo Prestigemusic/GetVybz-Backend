@@ -8,8 +8,8 @@ const app = express();
 app.use(express.json());
 
 // Health check
-app.get("/api/health", (req, res) => {
-  res.json({ status: "ok", message: "GetVybz backend is running 🚀" });
+app.get("/", (req, res) => {
+    res.json({ status: "ok", message: "GetVybz backend is running 🚀" });
 });
 
 // Routes
