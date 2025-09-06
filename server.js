@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const db = require('./models');
-const authRoutes = require('./routes/auth');
+const userRoutes = require('./routes/userRoutes'); // Corrected import
 const profileRoutes = require('./routes/profile'); // New route
 
 const app = express();
@@ -13,7 +13,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // Routes
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', userRoutes); // Make sure this is linked to userRoutes
 app.use('/api/profile', profileRoutes); // Use the new profile routes
 
 // Sync database and start server
