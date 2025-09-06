@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const db = require('./models');
-const authRoutes = require('./routes/auth'); // FIXED
+const authRoutes = require('./routes/auth'); // FIXED - updated
 const profileRoutes = require('./routes/profile');
 
 const app = express();
