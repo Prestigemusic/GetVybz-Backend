@@ -2,6 +2,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import cors from "cors";
 
 import bookingsRoute from "./routes/bookings.js";
 import messagesRoute from "./routes/messages.js";
@@ -11,11 +12,10 @@ import authRoute from "./routes/auth.js";
 
 dotenv.config();
 
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ MongoDB connected"))
-  .catch(err => console.error("❌ MongoDB error:", err));
-
 const app = express();
+
+// ✅ Middleware
+app.use(cors());
 app.use(express.json());
 
 // Health check
@@ -28,18 +28,17 @@ app.use("/api/bookings", bookingsRoute);
 app.use("/api/messages", messagesRoute);
 app.use("/api/jobs", jobsRoute);
 app.use("/api/profiles", profilesRoute);
-app.use("/api/auth", authRoute); // ✅ now mounted
+app.use("/api/auth", authRoute);
 
-// MongoDB connection
+// MongoDB connection + Server start
+const PORT = process.env.PORT || 8000;
+
 mongoose
-  .connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(process.env.MONGO_URI)
   .then(() => {
     console.log("✅ Connected to MongoDB Atlas");
-    app.listen(process.env.PORT, () => {
-      console.log(`🚀 Server running on http://localhost:${process.env.PORT}`);
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(`🚀 Server running on http://localhost:${PORT}`);
     });
   })
   .catch((err) => {
