@@ -90,8 +90,8 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// ✅ Get logged-in user's profile
 // @route   GET /api/auth/profile
-// @desc    Get logged-in user's profile
 // @access  Private
 router.get('/profile', authMiddleware, async (req, res) => {
   try {
