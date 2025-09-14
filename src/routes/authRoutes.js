@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/User');
+const User = require('../models/User'); // Path to your User model
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const authMiddleware = require('../middleware/authMiddleware'); // <- create this if not existing
+const authMiddleware = require('../middleware/authMiddleware');
 
 // @route   POST /api/auth/signup
 // @desc    Register a new user
@@ -18,30 +18,28 @@ router.post('/signup', async (req, res) => {
       return res.status(409).json({ msg: 'User already exists' });
     }
 
-    user = new User({
-      name,
-      email,
-      password,
-    });
+    user = new User({ name, email, password });
 
+    // Hash password
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(password, salt);
 
     await user.save();
 
-    const payload = {
-      user: {
-        id: user.id,
-      },
-    };
+    // Create and sign JWT
+    const payload = { user: { id: user.id } };
 
     jwt.sign(
       payload,
       process.env.JWT_SECRET,
-      { expiresIn: '7d' },
+      { expiresIn: '1d' },
       (err, token) => {
         if (err) throw err;
-        res.status(201).json({ token, user: { id: user.id, name: user.name, email: user.email } });
+        res.status(201).json({
+          message: 'Signup successful 🎉',
+          user: { id: user.id, name: user.name, email: user.email },
+          token,
+        });
       }
     );
   } catch (err) {
@@ -69,19 +67,20 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ msg: 'Invalid Credentials' });
     }
 
-    const payload = {
-      user: {
-        id: user.id,
-      },
-    };
+    // Create and sign JWT
+    const payload = { user: { id: user.id } };
 
     jwt.sign(
       payload,
       process.env.JWT_SECRET,
-      { expiresIn: '7d' },
+      { expiresIn: '1d' },
       (err, token) => {
         if (err) throw err;
-        res.json({ token, user: { id: user.id, name: user.name, email: user.email } });
+        res.json({
+          message: 'Login successful 🎉',
+          user: { id: user.id, name: user.name, email: user.email },
+          token,
+        });
       }
     );
   } catch (err) {
@@ -90,8 +89,8 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// ✅ Get logged-in user's profile
 // @route   GET /api/auth/profile
+// @desc    Get logged-in user's profile
 // @access  Private
 router.get('/profile', authMiddleware, async (req, res) => {
   try {
