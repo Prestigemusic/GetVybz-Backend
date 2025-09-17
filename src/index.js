@@ -4,17 +4,19 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
 
-import bookingsRoute from "./routes/bookings.js";
-import messagesRoute from "./routes/messages.js";
-import jobsRoute from "./routes/jobs.js";
-import profilesRoute from "./routes/profiles.js";
-import authRoute from "./routes/auth.js";
+import authRoutes from "./routes/auth.js";
+import profilesRoutes from "./routes/profiles.js";
 
 dotenv.config();
 
 const app = express();
+app.use((req, res, next) => {
+  console.log("<< SERVER INCOMING >>", req.method, req.originalUrl);
+  next();
+});
 
-// ✅ Middleware
+
+// Middleware
 app.use(cors());
 app.use(express.json());
 
@@ -24,11 +26,8 @@ app.get("/", (req, res) => {
 });
 
 // Routes
-app.use("/api/bookings", bookingsRoute);
-app.use("/api/messages", messagesRoute);
-app.use("/api/jobs", jobsRoute);
-app.use("/api/profiles", profilesRoute);
-app.use("/api/auth", authRoute);
+app.use("/api/auth", authRoutes);
+app.use("/api/profiles", profilesRoutes);
 
 // MongoDB connection + Server start
 const PORT = process.env.PORT || 8000;

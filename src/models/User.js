@@ -1,23 +1,31 @@
-const mongoose = require('mongoose');
+// src/models/User.js
+import mongoose from "mongoose";
 
-const UserSchema = new mongoose.Schema({
-  name: {
+const userSchema = new mongoose.Schema({
+  name: { type: String, required: true, trim: true },
+  email: { type: String, required: true, unique: true, lowercase: true },
+  password: { type: String, required: true },
+  username: {
     type: String,
-    required: true,
+    default: function () {
+      return this.email.split("@")[0];
+    },
   },
-  email: {
+  profilePicture: {
     type: String,
-    required: true,
-    unique: true,
+    default: "https://cdn-icons-png.flaticon.com/512/149/149071.png",
   },
-  password: {
+  coverPhoto: {
     type: String,
-    required: true,
+    default:
+      "https://images.unsplash.com/photo-1503264116251-35a269479413?w=1200",
   },
-  date: {
-    type: Date,
-    default: Date.now,
-  },
+  bio: { type: String, default: "Hey there! I’m new on GetVybz 🎵" },
+  followers: { type: Number, default: 0 },
+  following: { type: Number, default: 0 },
+  rating: { type: Number, default: 0 },
 });
 
-module.exports = mongoose.model('User', UserSchema);
+const User = mongoose.model("User", userSchema);
+
+export default User;
