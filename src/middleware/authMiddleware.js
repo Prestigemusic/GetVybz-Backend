@@ -1,10 +1,11 @@
-const jwt = require('jsonwebtoken');
+import jwt from "jsonwebtoken";
 
-function authMiddleware(req, res, next) {
-  const token = req.header('Authorization')?.replace('Bearer ', '');
+// Export as *default* so you can import without braces
+export default function authMiddleware(req, res, next) {
+  const token = req.header("Authorization")?.replace("Bearer ", "");
 
   if (!token) {
-    return res.status(401).json({ msg: 'No token, authorization denied' });
+    return res.status(401).json({ msg: "No token, authorization denied" });
   }
 
   try {
@@ -12,8 +13,6 @@ function authMiddleware(req, res, next) {
     req.user = decoded; // { id: ... }
     next();
   } catch (err) {
-    res.status(401).json({ msg: 'Token is not valid' });
+    res.status(401).json({ msg: "Token is not valid" });
   }
 }
-
-module.exports = authMiddleware;

@@ -1,45 +1,75 @@
 // src/index.js
 import express from "express";
+import http from "http";
+import { Server } from "socket.io";
+import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import cors from "cors";
+import listEndpoints from "express-list-endpoints";
 
 import authRoutes from "./routes/auth.js";
-import profilesRoutes from "./routes/profiles.js";
+import bookingsRoutes from "./routes/bookings.js";
+import messageRoutes from "./routes/messages.js";
+import profileRoutes from "./routes/profileRoutes.js";
 
 dotenv.config();
 
 const app = express();
-app.use((req, res, next) => {
-  console.log("<< SERVER INCOMING >>", req.method, req.originalUrl);
-  next();
-});
-
+const server = http.createServer(app);
+const io = new Server(server, { cors: { origin: "*" } });
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 
-// Health check
-app.get("/", (req, res) => {
-  res.json({ status: "ok", message: "GetVybz backend is running 🚀" });
+// Attach io to req for real-time messaging
+app.use((req, res, next) => {
+  req.io = io;
+  next();
 });
 
 // Routes
 app.use("/api/auth", authRoutes);
-app.use("/api/profiles", profilesRoutes);
+app.use("/api/bookings", bookingsRoutes);
+app.use("/api/messages", messageRoutes);
+app.use("/api/profiles", profileRoutes);
 
-// MongoDB connection + Server start
-const PORT = process.env.PORT || 8000;
+// Root endpoint
+app.get("/", (req, res) => res.send("✅ GetVybz API is running..."));
+
+// Socket.io
+io.on("connection", (socket) => {
+  console.log("⚡ User connected:", socket.id);
+
+  socket.on("register", (userId) => {
+    socket.join(userId);
+    console.log(`✅ User ${userId} registered to socket room`);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("❌ User disconnected:", socket.id);
+  });
+});
+
+// MongoDB
+const MONGO_URI = process.env.MONGO_URI;
+if (!MONGO_URI) {
+  console.error("❌ MONGO_URI not defined");
+  process.exit(1);
+}
 
 mongoose
-  .connect(process.env.MONGO_URI)
+  .connect(MONGO_URI)
   .then(() => {
-    console.log("✅ Connected to MongoDB Atlas");
-    app.listen(PORT, "0.0.0.0", () => {
-      console.log(`🚀 Server running on http://localhost:${PORT}`);
-    });
+    console.log("✅ Connected to MongoDB");
+
+    // Log all registered routes (to confirm /api/bookings/my etc. exists in Render)
+    console.log("📌 Registered endpoints:", listEndpoints(app));
+
+    const PORT = process.env.PORT || 5000;
+    server.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
   })
   .catch((err) => {
-    console.error("❌ MongoDB connection error:", err);
+    console.error("❌ Unable to connect to DB:", err);
+    process.exit(1);
   });
