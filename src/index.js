@@ -7,6 +7,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import listEndpoints from "express-list-endpoints";
 
+// Import routes
 import authRoutes from "./routes/auth.js";
 import bookingsRoutes from "./routes/bookings.js";
 import messageRoutes from "./routes/messages.js";
@@ -22,7 +23,7 @@ const io = new Server(server, { cors: { origin: "*" } });
 app.use(cors());
 app.use(express.json());
 
-// Attach io to req for real-time messaging
+// Attach socket.io to requests
 app.use((req, res, next) => {
   req.io = io;
   next();
@@ -34,8 +35,19 @@ app.use("/api/bookings", bookingsRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/profiles", profileRoutes);
 
-// Root endpoint
-app.get("/", (req, res) => res.send("✅ GetVybz API is running..."));
+// Root check
+app.get("/", (req, res) => {
+  res.send("✅ GetVybz API is running...");
+});
+
+// Health check
+app.get("/api/health", (req, res) => {
+  res.json({
+    status: "ok",
+    uptime: process.uptime(),
+    timestamp: Date.now(),
+  });
+});
 
 // Socket.io
 io.on("connection", (socket) => {
@@ -51,10 +63,10 @@ io.on("connection", (socket) => {
   });
 });
 
-// MongoDB
+// MongoDB connection
 const MONGO_URI = process.env.MONGO_URI;
 if (!MONGO_URI) {
-  console.error("❌ MONGO_URI not defined");
+  console.error("❌ MONGO_URI not defined in .env");
   process.exit(1);
 }
 
@@ -63,11 +75,13 @@ mongoose
   .then(() => {
     console.log("✅ Connected to MongoDB");
 
-    // Log all registered routes (to confirm /api/bookings/my etc. exists in Render)
+    // Log all endpoints
     console.log("📌 Registered endpoints:", listEndpoints(app));
 
-    const PORT = process.env.PORT || 5000;
-    server.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+    const PORT = process.env.PORT || 8000;
+    server.listen(PORT, () =>
+      console.log(`🚀 Server running on http://localhost:${PORT}`)
+    );
   })
   .catch((err) => {
     console.error("❌ Unable to connect to DB:", err);

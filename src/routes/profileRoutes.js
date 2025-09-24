@@ -1,12 +1,14 @@
+// src/routes/profileRoutes.js
 import express from "express";
-import authMiddleware from "../middleware/authMiddleware.js";
+import protect from "../middleware/authMiddleware.js";
+
 const router = express.Router();
 
-// GET my profile
-router.get("/me", authMiddleware, (req, res) => {
+// GET /api/profiles/me
+router.get("/me", protect, (req, res) => {
   res.json({
     profile: {
-      id: req.user.id,
+      id: req.user?.id,
       name: "Daniel",
       role: "customer",
       email: "daniel@example.com",

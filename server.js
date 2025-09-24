@@ -1,6 +1,8 @@
 // server.js
 import profileRoutes from "./src/routes/profileRoutes.js";
+import express from "express";
 
+const app = express();
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -31,6 +33,9 @@ app.use("/api/profiles", profileRoutes);
 // Root check
 app.get("/", (req, res) => {
   res.send("✅ GetVybz API is running...");
+
+app.get("/api/health", (req, res) => {
+  res.json({ status: "ok", uptime: process.uptime() });
 });
 
 // Connect Mongo
