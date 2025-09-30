@@ -1,0 +1,15 @@
+import admin from "firebase-admin";
+
+const serviceAccount = {
+  projectId: process.env.FIREBASE_PROJECT_ID,
+  clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+  privateKey: process.env.FIREBASE_PRIVATE_KEY?."-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQC0effPF6CLQ15A\nvtC6+D7Cl9/oMWyd6ETtVORFHcRAGPWefJUF+j3J28eWLtkbtdAZTwY3tcTqvRPM\naDqpXcBuhIOhANdwqojxNJF/rPzl8/vfsq8/u+UZ5ngvPugU65U/7pGBvBFjxKPe\nGz3lz/xjV8JX6rika8eV4sGrMjdmgF9oKSqTWC38BV4vZjXV6Nr78xr2eWveMeDd\nVXqOQjiMrS3r2IXNKqRIdW/eUzVPBL1Wxvc5ztF1nuYaxd9lRABFY1jTbeZt7VRc\nmXnBfETiRfRXfxgfdShzjCVvp3amKiN4utnqwNWSk5W7tKeMXR9F/Gref8Gm2v8h\nXARxJpEvAgMBAAECggEAKT4QH76t/PUttk0ExR1StkRfsh+NSz6XdcbnDVZikSVD\nB+8/XOjVMuprH0pgaeEwB4CUEqoSsHP58MXG1gprHbZhoCrhkMkf10MkltEwz9nk\nLrgWLVHiZntQ7rcI8TLu3ffGP6f7L1nx+qEuEXTon8kfy9iDTmuk5f82M8mbeGwu\nLxHf5jgpr/3P67LqCUuB9ADK8bKtt0PloD8uN7+XTxkKf+lUgrBBzhEmtCsPbVwQ\npg8bsQwIkQDRFud8VUZhKA2nuav9e0lkc8OLp1dzfzaQ2KCYJC/+0j8Gz8Zelcgc\nRJBmXgAM7/qFsHp/5n0IIjfMRuXFublLvLrR45SrDQKBgQDlUIF7WNqX5rQWkd75\nYvD2is610dzBQi5vBwIawwZFA/T7Iu/Mej+fFtTze1U0hCMyCnDsJGU4NVV30p5+\nM3GLbc0y4SACs0RrvCSPqHw46MxyKXqMimM8kJHwk22/AZnjCJyQ1AC19BERA6Lr\ntQ97hVV6Qbjp3GyyRYuMvqSuvQKBgQDJeofzdsLQ+eHtDdf0tn7H8m7Lk13q+cty\nyr+ImN8iBmbSx7/n9opdkeo/fo811bfptAMTcr9WYYS8I4NC7RyBo0IWISUpbEV7\nB4wclcfSFbHhtjPHRI66pRN4OGp2Mq8AgWfMCyDbPIFYO7pyuVkiBq9khzz3EDKI\nne0w6j+EWwKBgCcXRjtktj7W0TRXwY750uH0X7CXCe7X/Vpn82/kdxkkx4pYNlDB\nNj9EgSDQkYHWVLmfFgjrW2XtkZhPiz0wP9bo7OYTgoVzUeKbvA/RRPvek5uSfpWe\nsbQNYROFzluVRkpxmV8HBOf/pzkjSY6s2urPm/avZXpYXR82w8dGaIRxAoGAE6BL\n/ftjnte4mk7u6necgf2rrUj9rRYIK3Z0kenSUo4tFfs/RmlNsS+1kdnSOXxIHgvb\nANn8qX12YJ1U+//89uPgXCd+ZzqUyhdCHsa4YE6ctU/6Wz7iaGwMKXnVZQ4q3fG9\nGrM60CBkuSOYVfSYKihcjX5fAfIh+gzoPguThGECgYBe68bsOZpvvYUfHbePmeUj\n4+lkqXnwKlHK9WPFhKwMWF4JebP0eSWcjnF6xb4HjZ3r4FqJhNOEZ25U83FcDyCd\n+VNGmSB0wpOGm63pdJSn5b6M8LTEO7jB7Dqj69Jfs06SjyTKjSmSJq1/XSHRF+hm\nNO9s/PJ9D6yQC9ADubX1dQ==\n-----END PRIVATE KEY-----\n"),
+};
+
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
+  });
+}
+
+export default admin;

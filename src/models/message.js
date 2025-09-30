@@ -1,22 +1,27 @@
+// src/routes/messages.js
 import express from "express";
-import { protect } from "../middleware/authMiddleware.js";
+import protect from "../middleware/authMiddleware.js"; // default import (works with both exports)
 
 const router = express.Router();
 
-// GET /api/messages/my-conversations - Get all conversations for logged in user
-router.get("/my-conversations", protect, async (req, res) => {
-  try {
-    // Example: replace with actual Mongo model
-    // const conversations = await Conversation.find({ participants: req.user });
-    const conversations = [
-      { id: 1, with: "DJ Mike", lastMessage: "See you Friday!", user: req.user },
-    ];
+// GET user's conversations
+router.get("/my-conversations", protect, (req, res) => {
+  res.json({
+    message: "Fetched conversations",
+    userId: req.user?.id ?? null,
+    conversations: [], // TODO: wire DB here
+  });
+});
 
-    res.json(conversations);
-  } catch (err) {
-    console.error("Messages fetch error:", err);
-    res.status(500).json({ msg: "Server error fetching conversations" });
-  }
+// POST send message
+router.post("/", protect, (req, res) => {
+  const { to, text } = req.body;
+  res.status(201).json({
+    id: Date.now(),
+    from: req.user?.id ?? null,
+    to,
+    text,
+  });
 });
 
 export default router;

@@ -1,30 +1,26 @@
-// server.js
-import profileRoutes from "./src/routes/profileRoutes.js";
 import express from "express";
+import bodyParser from "body-parser";
+import cors from "cors";
+import mongoose from "mongoose";
+import path from "path";
+import dotenv from "dotenv";
+
+import authRoutes from "./src/routes/authRoutes.js";
+import profileRoutes from "./src/routes/profileRoutes.js";
+
+dotenv.config();
 
 const app = express();
-const express = require("express");
-const bodyParser = require("body-parser");
-const cors = require("cors");
-const mongoose = require("mongoose");
-const path = require("path");
-
-const authRoutes = require("./src/routes/authRoutes");
-const profileRoutes = require("./src/routes/profileRoutes");
-
-require("dotenv").config();
-
-const app = express();
-const PORT = process.env.PORT || 5000;
-const MONGODB_URI = process.env.MONGODB_URI;
+const PORT = process.env.PORT || 8000;
+const MONGODB_URI = process.env.MONGO_URI;
 
 // Middleware
-app.use(cors());
+app.use(cors({ origin: "*" }));
 app.use(bodyParser.json());
 app.use(express.json());
 
 // Serve uploads folder so images are accessible
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 // Routes
 app.use("/api/auth", authRoutes);
@@ -33,9 +29,14 @@ app.use("/api/profiles", profileRoutes);
 // Root check
 app.get("/", (req, res) => {
   res.send("✅ GetVybz API is running...");
+});
 
+// Health check (for Render + frontend health probe)
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok", uptime: process.uptime() });
+});
+app.get("/health", (req, res) => {
+  res.status(200).send("OK");
 });
 
 // Connect Mongo
