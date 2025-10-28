@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: getvybz-backend
+    env: node
+    branch: main
+    plan: free
+    # Build & Start commands
+    buildCommand: npm install
+    startCommand: npm start
+    # Health check
+    healthCheckPath: /api/health
+    # Auto-deploy on git push
+    autoDeploy: true
+    envVars:
+      - key: MONGO_URI
+        fromDatabase: MONGO_DB_CONNECTION_STRING
+      - key: OPENAI_API_KEY
+        fromDatabase: OPENAI_API_KEY
+      - key: SERVER_URL
+        value: https://your-backend.onrender.com
+      - key: PAYSTACK_SECRET
+        value: your-paystack-secret
+      - key: FLUTTERWAVE_SECRET
+        value: your-flutterwave-secret
+      - key: CLOUDINARY_CLOUD_NAME
+        value: your-cloudinary-cloud-name
+      - key: CLOUDINARY_API_KEY
+        value: your-cloudinary-api-key
+      - key: CLOUDINARY_API_SECRET
+        value: your-cloudinary-api-secret
+    # Node version
+    runtime: node:22

@@ -1,0 +1,192 @@
+{
+  "info": {
+    "name": "GetVybz - Org & Billing Test Suite",
+    "_postman_id": "f36a7a90-93c4-4f26-9a42-b3e3f6b42051",
+    "description": "Test suite for GetVybz organization management, user assignment, and billing flows (Paystack/Flutterwave integrated).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1️⃣ Create Organization",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Vybz Entertainment Co.\",\n  \"contactEmail\": \"vybzorg@test.com\",\n  \"contactPhone\": \"+2348012345678\",\n  \"verified\": false\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/orgs",
+          "host": ["{{base_url}}"],
+          "path": ["api", "orgs"]
+        }
+      }
+    },
+    {
+      "name": "2️⃣ Add User to Organization",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"userId\": \"{{userId}}\",\n  \"role\": \"creative\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/orgs/{{orgId}}/users",
+          "host": ["{{base_url}}"],
+          "path": ["api", "orgs", "{{orgId}}", "users"]
+        }
+      }
+    },
+    {
+      "name": "3️⃣ Update Organization Plan",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"subscriptionPlan\": \"premium\",\n  \"billingCycle\": \"monthly\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/orgs/{{orgId}}/plan",
+          "host": ["{{base_url}}"],
+          "path": ["api", "orgs", "{{orgId}}", "plan"]
+        }
+      }
+    },
+    {
+      "name": "4️⃣ Verify Organization",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/orgs/{{orgId}}/verify",
+          "host": ["{{base_url}}"],
+          "path": ["api", "orgs", "{{orgId}}", "verify"]
+        }
+      }
+    },
+    {
+      "name": "5️⃣ Subscribe Organization (Start Billing)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"plan\": \"premium\",\n  \"cycle\": \"monthly\",\n  \"paymentGateway\": \"paystack\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/billing/{{orgId}}/subscribe",
+          "host": ["{{base_url}}"],
+          "path": ["api", "billing", "{{orgId}}", "subscribe"]
+        }
+      }
+    },
+    {
+      "name": "6️⃣ View Billing Info",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/billing/{{orgId}}",
+          "host": ["{{base_url}}"],
+          "path": ["api", "billing", "{{orgId}}"]
+        }
+      }
+    },
+    {
+      "name": "7️⃣ Cancel Subscription",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/billing/{{orgId}}/cancel",
+          "host": ["{{base_url}}"],
+          "path": ["api", "billing", "{{orgId}}", "cancel"]
+        }
+      }
+    },
+    {
+      "name": "8️⃣ Force Billing Sweep",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/billing/run-due",
+          "host": ["{{base_url}}"],
+          "path": ["api", "billing", "run-due"]
+        }
+      }
+    }
+  ],
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:8000" },
+    { "key": "token", "value": "" },
+    { "key": "orgId", "value": "" },
+    { "key": "userId", "value": "" }
+  ]
+}

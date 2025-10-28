@@ -1,0 +1,199 @@
+{
+  "info": {
+    "_postman_id": "ae34a1c7-893c-42f3-b58b-99cfe92a1b3b",
+    "name": "GetVybz Automated Tests",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "vybz-automated-suite"
+  },
+  "item": [
+    {
+      "name": "1️⃣ Login (Get JWT)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{testEmail}}\",\n  \"password\": \"{{testPassword}}\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/auth/login",
+          "host": ["{{base_url}}"],
+          "path": ["api", "auth", "login"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Login successful', function() {",
+              "  pm.response.to.have.status(200);",
+              "  const json = pm.response.json();",
+              "  pm.expect(json.token).to.exist;",
+              "  pm.environment.set('token', json.token);",
+              "  console.log('✅ Token stored:', json.token);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "2️⃣ Create Organization",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Vybz Test Org\",\n  \"contact\": {\n    \"email\": \"orgtest@example.com\",\n    \"phone\": \"+2348012345678\"\n  }\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/orgs",
+          "host": ["{{base_url}}"],
+          "path": ["api", "orgs"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Organization created successfully', function() {",
+              "  pm.response.to.have.status(201);",
+              "  const json = pm.response.json();",
+              "  pm.expect(json._id).to.exist;",
+              "  pm.environment.set('orgId', json._id);",
+              "  console.log('✅ Org ID stored:', json._id);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "3️⃣ Subscribe Organization to Plan",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"plan\": \"pro_monthly\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/billing/{{orgId}}/subscribe",
+          "host": ["{{base_url}}"],
+          "path": ["api", "billing", "{{orgId}}", "subscribe"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Subscription created', function() {",
+              "  pm.response.to.have.status(200);",
+              "  const json = pm.response.json();",
+              "  pm.expect(json.subscription).to.exist;",
+              "  pm.environment.set('subscriptionId', json.subscription._id);",
+              "  console.log('✅ Subscription stored:', json.subscription._id);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "4️⃣ Fetch Organization Billing Info",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/billing/{{orgId}}",
+          "host": ["{{base_url}}"],
+          "path": ["api", "billing", "{{orgId}}"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Billing info fetched successfully', function() {",
+              "  pm.response.to.have.status(200);",
+              "  const json = pm.response.json();",
+              "  pm.expect(json.currentPlan).to.exist;",
+              "  pm.expect(json.billingStatus).to.exist;",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "5️⃣ Cancel Subscription",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/billing/{{orgId}}/cancel",
+          "host": ["{{base_url}}"],
+          "path": ["api", "billing", "{{orgId}}", "cancel"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Subscription cancelled successfully', function() {",
+              "  pm.response.to.have.status(200);",
+              "  const json = pm.response.json();",
+              "  pm.expect(json.message).to.include('cancelled');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "6️⃣ Run Due Subscription Sweep",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/billing/run-due",
+          "host": ["{{base_url}}"],
+          "path": ["api", "billing", "run-due"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Sweep executed successfully', function() {",
+              "  pm.response.to.have.status(200);",
+              "  const json = pm.response.json();",
+              "  pm.expect(json.processed).to.be.a('number');",
+              "});"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

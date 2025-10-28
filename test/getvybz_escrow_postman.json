@@ -1,0 +1,121 @@
+{
+  "info": {
+    "name": "GetVybz Escrow Testing",
+    "_postman_id": "getvybz-escrow-test-001",
+    "description": "Full end-to-end testing for Escrow: Init, Webhook, Release, Refund",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Initiate Escrow",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer <YOUR_USER_JWT>",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8000/api/escrow/initiate",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["api", "escrow", "initiate"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"bookingId\": \"<VALID_BOOKING_ID>\",\n  \"amount\": 5000,\n  \"email\": \"customer@example.com\",\n  \"gateway\": \"paystack\"\n}"
+        }
+      }
+    },
+    {
+      "name": "2. Simulate Paystack Webhook",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8000/api/escrow/webhook/paystack",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["api", "escrow", "webhook", "paystack"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"event\": \"charge.success\",\n  \"data\": {\n    \"reference\": \"<REFERENCE_FROM_INIT>\",\n    \"amount\": 500000,\n    \"metadata\": { \"bookingId\": \"<VALID_BOOKING_ID>\" },\n    \"status\": \"success\"\n  }\n}"
+        }
+      }
+    },
+    {
+      "name": "3. Release Funds",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer <YOUR_USER_JWT>",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8000/api/escrow/release/<BOOKING_ID>",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["api", "escrow", "release", "<BOOKING_ID>"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"note\": \"Releasing funds after booking completion\"\n}"
+        }
+      }
+    },
+    {
+      "name": "4. Refund Funds",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer <YOUR_USER_JWT>",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8000/api/escrow/refund/<BOOKING_ID>",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["api", "escrow", "refund", "<BOOKING_ID>"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"reason\": \"Customer cancelled\",\n  \"initiatedBy\": \"<USER_ID>\"\n}"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "watch": ["src"],
+  "ignore": ["*.log", "node_modules", "FUNDING.txt"],
+  "ext": "js,json",
+  "exec": "node src/index.js"
+}
